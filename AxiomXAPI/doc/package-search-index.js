@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"net.axiomx.client"},{"l":"net.axiomx.examples"},{"l":"net.axiomx.parsers"},{"l":"net.axiomx.types"},{"l":"net.axiomx.utils"}]
