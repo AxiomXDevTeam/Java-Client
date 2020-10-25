@@ -54,7 +54,7 @@ public class AClient {
 		s = new Socket("farm.axiomx.net", 5050);
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream());
-		
+		s.setSoTimeout(10000000);
 		Thread.sleep(1000);
 		
 		out.println(MessageType.CREDENTIALS + ":" + user + "," + pass);
@@ -81,7 +81,7 @@ public class AClient {
 				try {
 					while(s.isConnected()) {
 						String msg = in.readLine();
-						if(msg == null) {
+						if(reqId == 0 && msg == null) {
 							System.err.println("Invalid credentials"); return;
 						}
 						processMessage(msg);

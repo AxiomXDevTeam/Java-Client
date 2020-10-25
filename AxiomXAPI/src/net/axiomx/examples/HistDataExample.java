@@ -11,7 +11,7 @@ import net.axiomx.types.HistoricalDataType;
 public class HistDataExample {
 	
 	public static void main(String [] args) throws UnknownHostException, IOException, InterruptedException {
-		AClient client = new AClient("username", "passowrd"); //Connects to the API Server
+		AClient client = new AClient("username", "beta"); //Connects to the API Server
 		
 		new HistOptDataReq(); //Registers the wrapper.
 		
