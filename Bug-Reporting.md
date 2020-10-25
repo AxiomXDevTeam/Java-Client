@@ -1,0 +1,3 @@
+# Bug-Reporting
+
+The beginning of an awesome article...
