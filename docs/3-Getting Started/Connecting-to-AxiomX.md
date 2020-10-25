@@ -8,8 +8,12 @@ Conencting to AxiomX entails instaniating an `AClient` object. The credentials a
   AClient client = new AClient("username", "passowrd"); 
 ```
 
+The next step is instantiating the implementation for handling historical data requests. Note that any such wrapper must be registered properly in it's constructor. To create a wrapper from scratch see **MessageParser**.
 
 
 ```java
   new HistOptDataReq();
 ```
+
+
+
