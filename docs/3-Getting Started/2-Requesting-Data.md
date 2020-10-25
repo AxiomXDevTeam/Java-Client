@@ -13,3 +13,12 @@ Calling `getHistOptData()` on the `AClient` object triggers a historical data re
   data = client.getHistOptData("SPY", "20201023", "P", 350.0, HistoricalDataType.BID);
 ```
 
+## Parameters:
+- ##### Underlying Symbol
+- ##### Expiration date (yyyyMMdd)
+- ##### Right ('P' : Put, 'C' : Call)
+- ##### Strike price
+- ##### HistoricalDataType: BID, ASK, BAR (for volumes), VOL, OPEN_INTEREST
+
+
+"MID" will be added next version which computes the midpoint prices given bid/ask.
