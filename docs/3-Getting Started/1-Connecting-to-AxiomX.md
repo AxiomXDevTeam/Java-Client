@@ -1,4 +1,4 @@
-# Connecting-to-AxiomX
+# Connecting to AxiomX
 
 
 

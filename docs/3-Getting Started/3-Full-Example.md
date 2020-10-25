@@ -1,4 +1,4 @@
-# 3-Full-Example
+# 3 Full Example
 
 #### The aforementioned lines of code are part of this method. 
 
