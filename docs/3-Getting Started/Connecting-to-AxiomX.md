@@ -11,5 +11,5 @@ Conencting to AxiomX entails instaniating an `AClient` object. The credentials a
 
 
 ```java
-  new HistOptDataReq(3);
+  new HistOptDataReq();
 ```
