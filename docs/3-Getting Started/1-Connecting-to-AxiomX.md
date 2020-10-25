@@ -15,5 +15,8 @@ The next step is instantiating the implementation for handling historical data r
   new HistOptDataReq();
 ```
 
+It is recommended to wait for the client to connect before attempting to make requests.
 
-
+```java
+  Thread.sleep(4000); 
+```
