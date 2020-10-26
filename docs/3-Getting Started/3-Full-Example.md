@@ -19,7 +19,7 @@
 	}
 ```
 
-This method prints each bid on 1 minute intervals for the entire recorded lifespan of the option with a strike price of 350.0. The expected output:
+We request "BID" 1 minute intervals for the entire recorded lifespan of the option with a strike price of 350.0. The expected output:
 
 ```java
 20201012,0931,530,4.58
