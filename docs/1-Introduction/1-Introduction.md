@@ -15,6 +15,6 @@ tags: [introduction]
 
 • 4 GB of system memory
 
-• A working knowledge of Java
+• Working knowledge of Java
 
 • Download speeds in excess of 10mbps
