@@ -51,7 +51,7 @@ public class AClient {
 	 * @throws InterruptedException
 	 */
 	public AClient(String user, String pass) throws UnknownHostException, IOException, InterruptedException {
-		s = new Socket("farm.axiomx.net", 5050);
+		s = new Socket("farm.axiomxtechnologies.com", 5050);
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream());
 		s.setSoTimeout(10000000);
