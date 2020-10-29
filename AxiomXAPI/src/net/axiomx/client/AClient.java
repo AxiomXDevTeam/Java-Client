@@ -41,7 +41,6 @@ public class AClient {
 	private static TreeMap<MessageType, MessageParser> wrappers = new TreeMap<>();
 	
 	/**
-	 *
 	 * Connects to the AxiomX data farm.
 	 * 
 	 * @param user (This has no effect but should not be left empty)
@@ -51,6 +50,39 @@ public class AClient {
 	 * @throws InterruptedException
 	 */
 	public AClient(String user, String pass) throws UnknownHostException, IOException, InterruptedException {
+		s = new Socket("farm.axiomxtechnologies.com", 5050);
+		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		out = new PrintWriter(s.getOutputStream());
+		s.setSoTimeout(10000000);
+		Thread.sleep(1000);
+		
+		out.println(MessageType.CREDENTIALS + ":" + user + "," + pass);
+		out.flush();
+		Thread.sleep(1000);
+		startMessageProcessing();
+	}
+	
+	/**
+	 *  Instaniate AClient without the intent to connect instantly. 
+	 *  Use connect() to connect to AxiomX servers.
+	 */
+	public AClient() {
+		
+	}
+	
+	/**
+	 * Connects to the AxiomX data farm.
+	 * 
+	 * @param user (This has no effect but should not be left empty)
+	 * @param pass The beta product key
+	 * @throws InterruptedException
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
+	public void connect(String user, String pass) throws InterruptedException, UnknownHostException, IOException {
+		if(s.isConnected())
+			throw new RuntimeException("Client is already connected");
+		
 		s = new Socket("farm.axiomxtechnologies.com", 5050);
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream());
