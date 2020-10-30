@@ -1,7 +1,7 @@
 # Listing 
 
 
-#### In the context of Options, we refer to listing is the means of retrieving the universe of a specific trait of an options contract.
+#### In the context of options, we refer to listing as the means of retrieving the universe of a specific trait of an options contract.
 
 
 
