@@ -18,9 +18,10 @@ public class HistDataExample {
 		Thread.sleep(4000); //Wait for the client to connect
 		
 		List<String> data = client.getHistOptData("SPY", "20201030", "P", 350.0, HistoricalDataType.BID);
-
 		
 		for(String s : data)
 			System.out.println(s);
+		
+		client.disconnect(); //Closes the API connection
 	}
 }

@@ -1,7 +1,6 @@
 package net.axiomx.client;
 /* Copyright © 2020, AxiomX Technologies and/or its affiliates. All rights reserved.
 * AxiomX Technologies PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
-* 
 */
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +10,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import net.axiomx.types.HistoricalDataType;
 import net.axiomx.types.MessageParser;
@@ -20,14 +19,16 @@ import net.axiomx.types.MessageType;
 import net.axiomx.utils.Utils;
 
 /**
- * <p> Here is a means of accessing AxiomX data. Any request will wait for
+ * <p> Class <code> AClient </code> is a means of accessing AxiomX's data. Any request will wait for
  * callbacks before returning any information. If you wish to send concurrent
- * requests, re-implement this class.
+ * requests, re-implement this class and @see MessageParser.
  *
  * 
  * 
  * @author Bailey Danseglio
  * @apiNote Editing this class will result in errors if you aren't careful
+ * @callbacks Waits
+ * @see MessageParser
  * @version 1.9.4
  * 
  */
@@ -36,16 +37,19 @@ public class AClient {
 	private BufferedReader in;
 	private PrintWriter out;
 	private int reqId;
-	private TreeMap<Integer, Object> data = new TreeMap<Integer, Object>();
+	private HashMap<Integer, Object> data = new HashMap<Integer, Object>();
 	private ArrayList<Integer> complete = new ArrayList<Integer>();
-	private static TreeMap<MessageType, MessageParser> wrappers = new TreeMap<>();
+	private static HashMap<MessageType, MessageParser> wrappers = new HashMap<>();
 	
 	/**
-	 * Connects to the AxiomX data farm.
+	 * Connects to the AxiomX data farm. The client will be disconnected unless
+	 * the first message is a credential validation using 
+	 * <code>MessageType.CREDENTIALS</code> 
 	 * 
 	 * @param user (This has no effect but should not be left empty)
 	 * @param pass The beta product key
 	 * @throws UnknownHostException
+	 * @see MessageType
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -107,7 +111,7 @@ public class AClient {
 	/**
 	 * A thread to listen for callbacks
 	 */
-	public void startMessageProcessing() {
+	private void startMessageProcessing() {
 	new Thread() {
 		public void run() {
 				try {
@@ -132,6 +136,7 @@ public class AClient {
 		int req = Integer.valueOf(msg.substring(msg.indexOf(':') + 2, msg.indexOf(',')));
 		MessageType type = Utils.getMessageType(msg);
 		String [] args = msg.substring(msg.indexOf(',') + 1).split(",");
+		
 		MessageParser p = wrappers.get(type);
 		
 		if(p != null)
