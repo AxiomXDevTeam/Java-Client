@@ -1,5 +1,7 @@
 package net.axiomx.types;
 
+import java.util.List;
+
 /**
  * This interface provides a means of handling server 
  * callbacks to the client. Implementations of should
@@ -32,5 +34,5 @@ public interface MessageParser {
 	 * @return Typically a string, that is hashed
 	 */
 	public Object onCallback(MessageType type, int orderId, String [] args);
-	
+	public Object onCallback(HistoricalDataType type, int orderId, int duration, List<String> args);
 	}

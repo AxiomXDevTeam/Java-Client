@@ -2,19 +2,26 @@ package net.axiomx.types;
 
 public enum HistoricalDataType {
 	
-	VOLUME("VOL"),
-	ASK("ASK"),
-	BID("BID"),
-	BAR("BAR"),
-	OPEN_INTEREST("OI");
+	VOLUME("VOL", 1),
+	ASK("ASK", 2),
+	BID("BID", 2),
+	OHLC("OHLC", 4),
+	OPEN_INTEREST("OI", 2),
+	IMPLIED_VOLATILITY("IV", 4);
 	
-	final String type;	
+	private final String type;	
+	private final int len;
 	
-	HistoricalDataType(String s) {
+	HistoricalDataType(String s, int i) {
 		type = s;
+		len = i;
 	}
 	
 	public String toString() {
 		return type;
+	}
+	
+	public int len() {
+		return len;
 	}
 }

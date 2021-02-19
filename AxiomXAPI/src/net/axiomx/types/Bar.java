@@ -3,10 +3,10 @@ package net.axiomx.types;
 public class Bar {
 	
 	private double open, high, low, close, weightedPrice;
-	private int count, volume;
-	private String date, time;
+	private int count, volume, time;
+	private String date;
 	
-	public Bar(String date, String time, double open, double high, double low, double close, int volume, int count, double weightedPrice) {
+	public Bar(String date, int time, double open, double high, double low, double close, int volume, int count, double weightedPrice) {
 		this.date = date;
 		this.time = time;
 		this.open = open;
@@ -15,6 +15,10 @@ public class Bar {
 		this.close = close;
 		this.volume = volume;
 		this.count = count;
+	}
+	
+	public Bar() {
+		
 	}
 
 	public int count() {
@@ -73,11 +77,11 @@ public class Bar {
 		this.close = close;
 	}
 
-	public String time() {
+	public int time() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(int time) {
 		this.time = time;
 	}
 

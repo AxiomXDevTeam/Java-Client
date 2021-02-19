@@ -6,5 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="org.eclipse.jdt.annotation_2.2.300.v20190328-1431.jar" sourcepath="C:/Users/Baile/.m2/repository/org/eclipse/jdt/org.eclipse.jdt.annotation/2.2.300/org.eclipse.jdt.annotation-2.2.300-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
