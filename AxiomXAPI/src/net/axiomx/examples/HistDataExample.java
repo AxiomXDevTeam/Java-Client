@@ -13,19 +13,18 @@ public class HistDataExample {
 	
 	public static void main(String [] args) throws UnknownHostException, IOException, InterruptedException {
 	
-		AClient a = new AClient("demo", "demo"); //connecting 
+		AClient a = new AClient("username", "password"); //connecting 
 		
 		new HistOptDataReqBar(); //registering the interpreter
 		
 		Thread.sleep(1000); //waiting to connect
-		
-		List<Bar> bars = a.reqHistOptData("SPY", "20210219", "C", 385d, HistoricalDataType.VOLUME);
+	
+		List<Bar> bars = a.reqHistOptData("SPY", "20210219", "C", 385d, HistoricalDataType.OPEN_INTEREST);
 		
 		for(Bar k : bars) 
-			if(k.time() % 5 == 0)
 				System.out.println(k.toStringNoHLC());
 
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 		a.disconnect();
 	}
 }
