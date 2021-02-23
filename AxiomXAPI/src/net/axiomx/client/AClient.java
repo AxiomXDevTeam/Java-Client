@@ -2,9 +2,7 @@ package net.axiomx.client;
 /* Copyright © 2021, AxiomX, its affliates, and subsidiaries. All rights reserved.
 * AxiomX PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
 */
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -19,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import net.axiomx.compression.DecomV1;
 import net.axiomx.compression.Decompressor;
 import net.axiomx.compression.RDG;
-import net.axiomx.io.AReader;
+import net.axiomx.io.APacket;
 import net.axiomx.io.PacketReciever;
 import net.axiomx.types.Bar;
 import net.axiomx.types.HistoricalDataType;
@@ -41,9 +39,7 @@ import net.axiomx.types.MessageType;
  */
 public class AClient {
 	private Socket s;
-	private BufferedReader in;
 	private PrintWriter out;
-	private AReader a;
 	private int reqId;
 	private HashMap<Integer, Object> data = new HashMap<>();
 	private HashMap<Integer, HistoricalDataType> reqs = new HashMap<>(32);
@@ -70,9 +66,7 @@ public class AClient {
 		s = new Socket("farm.axiomxtechnologies.com", 5050);
 		s.setReceiveBufferSize(65536 * 10);
 		s.setSendBufferSize(65536 * 10);
-		a = new AReader(s.getInputStream());
-		in = new BufferedReader(new InputStreamReader(s.getInputStream()), 65536 * 10);
-		p = new PacketReciever(a);
+		p = new PacketReciever(s.getInputStream());
 		out = new PrintWriter(s.getOutputStream());
 		s.setSoTimeout(10000000);
 		Thread.sleep(1000);
@@ -89,9 +83,7 @@ public class AClient {
 		s = new Socket("farm.axiomxtechnologies.com", 5050);
 		s.setReceiveBufferSize(65536 * 10);
 		s.setSendBufferSize(65536 * 10);
-		a = new AReader(s.getInputStream());
-		in = new BufferedReader(new InputStreamReader(s.getInputStream()), 65536 * 10);
-		p = new PacketReciever(a);
+		p = new PacketReciever(s.getInputStream());
 		out = new PrintWriter(s.getOutputStream());
 		s.setSoTimeout(10000000);
 		Thread.sleep(1000);
@@ -125,7 +117,6 @@ public class AClient {
 		
 		s = new Socket("farm.axiomxtechnologies.com", 5050);
 		s.setReceiveBufferSize(65536 * 10);
-		in = new BufferedReader(new InputStreamReader(s.getInputStream()), 65536 * 10);
 		out = new PrintWriter(s.getOutputStream());
 		s.setSoTimeout(10000000); //This is temporary
 		Thread.sleep(1000);
@@ -151,16 +142,9 @@ public class AClient {
 	private void startMessageProcessing() {
 	new Thread() {
 		public void run() {
-			String msg;
-			byte [] temp;
 				try {
-					while(s.isConnected()) {
-					    temp = a.read();
-						msg = new String(temp, StandardCharsets.US_ASCII);
-						if(reqId == 0 && temp == null) {
-							System.err.println("Invalid credentials"); return;
-						}					
-						processMessage(msg, temp, a.getLastLen());
+					while(s.isConnected()) {			  	
+						processMessage(p.read());
 					}
 				} catch (IOException e) {
 					System.err.println("Lost connection to AxiomX");
@@ -172,49 +156,31 @@ public class AClient {
 	 * from the data farm.
 	 * @param msg The coded message
 	 */
-	private void processMessage(String msg, byte [] raw, int length) {
-		int req = 0;
+	private void processMessage(APacket a) {
+		int req = a.id();
 		
-		//System.out.println(msg.substring(0, Math.min(msg.length(), 50)));
-		
-		MessageType type = MessageType.from(msg);
-		
-		if(msg.contains("HODR") && msg.contains("PA")) 
-			throw new RuntimeException("invalid param spacing");
-		
-		if(type == null) 
-			throw new RuntimeException("invalid params");
-	
-		if(type.equals(MessageType.PACKET)) {
-			interpPacket(msg);
+		//ERRORS
+		if(a.msg() == null || a.msg().equals(MessageType.ERROR)) {
+			processError(a);
 			return;
 		}
 		
-		MessageParser p = wrappers.get(type);
-		List<String> args;
-		
-		if(p != null) { //This means we need to decompress and there is an interpeting implementation
-			args = decompress.decompress(raw, length, msg.substring(0, msg.indexOf(',') + 1).getBytes().length + 1);
-			//The above line is not incredibly efficient and we'll have to change it later on.
-			data.put(req, p.onCallback(reqs.get(req), req, 1, args));	
-			return;
-		}
-		
-	//	args = msg.substring(msg.indexOf(',') + 1).split(",");
-		try {
-		if(type.equals(MessageType.HIST_OPT_DATA_END)) //The implementation is one line of code . : no class needed
+		if(a.msg().equals(MessageType.HIST_OPT_DATA_END)) {
 			complete.add(req);
-		} catch(Exception e) {
-			System.out.println(msg);
-			e.printStackTrace();
 			return;
 		}
-		if(type.equals(MessageType.ALL_EXPS)) //The implementation is one line of code . : no class needed
-			data.put(req, Arrays.asList(msg.substring(msg.indexOf(',') + 1).split(",")));
 		
-		if(type.equals(MessageType.ALL_STRIKES)) //The implementation is one line of code . : no class needed
-			data.put(req, Arrays.asList(msg.substring(msg.indexOf(',') + 1).split(",")));
+		MessageParser p = wrappers.get(a.msg());
 		
+		List<String> args = decompress.decompress(a.data(), 0, a.size());
+		
+		if(p != null)
+			data.put(req, p.onCallback(reqs.get(req), req, args));	
+		else if(a.msg().equals(MessageType.INFO))
+			System.out.println("Info: " + new String(a.data(), StandardCharsets.US_ASCII));
+		else	
+			data.put(req, Arrays.asList(new String(a.data(), StandardCharsets.US_ASCII).split(",")));
+		// The above line of code should be replaced with something more efficient
 	}
 	
 	/**
@@ -225,6 +191,10 @@ public class AClient {
 	private void sendReq(MessageType e, String s) {
 		out.println(e + ":" + s);
 		out.flush();
+	}
+	
+	public void processError(APacket a) {
+		System.err.println("ERROR(" + a.id() + "): " + new String(a.data(), StandardCharsets.US_ASCII));
 	}
 	
 	/**
@@ -242,7 +212,7 @@ public class AClient {
 	public List<Bar> reqHistOptData(String sym, String exp, String right, double strike, HistoricalDataType type) {
 		int req = reqId++;
 		reqs.put(req, type);
-		
+																			// below is for formatting it correctly
 		sendReq(MessageType.HIST_OPT_DATA_REQ, req + "," + sym + "," + exp + "," + Double.valueOf(strike) + "," + right + "," + type + "," + null + "," + -1 + "," + 1); // 7 milliseconds
 		
 		while(!complete.contains(req)) 
@@ -294,28 +264,11 @@ public class AClient {
 	}
 	
 	/**
-	 * Interprets packet metadata messages
-	 * 
-	 * @param msg A string with the message type <code>PACKET</code>
-	 */
-	public void interpPacket(String msg) {
-		try {
-			byte [] temp = p.read(Integer.valueOf(msg.substring(msg.indexOf(':') + 1, msg.indexOf(','))));
-			processMessage(new String(temp, StandardCharsets.US_ASCII), temp, p.getSize());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
 	 * Closes the API connection
 	 * @throws IOException
 	 */
 	public void disconnect() throws IOException {
 		s.close();
-		in.close();
 		out.close();
 	}
 }

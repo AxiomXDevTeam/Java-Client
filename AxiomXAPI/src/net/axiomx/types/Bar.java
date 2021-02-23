@@ -96,4 +96,8 @@ public class Bar {
 	public String toString() {
 		return date + " " + time + " " + open + " " + high + " " + low + " " + close + " " + volume + " " + count + " " + weightedPrice;
 	}
+	
+	public String toStringNoHLC() {
+		return date + " " + time + " " + open + " " + volume + " " + count + " " + weightedPrice;
+	}
 }

@@ -15,9 +15,9 @@ import java.util.List;
  */
 public interface MessageParser { 
 	
-	
+
 	/**
-	 * The method used to make a request will wait for callbacks. This interface provides
+	 * 	The method used to make a request will wait for callbacks. This interface provides
 	 * a method for parsing and handling callbacks. The object returned is hashed in 
 	 * correspondance to its order ID. Note that the object in a table is commonly
 	 * of type @see List. For historical data, where there are multiple elements / callbacks
@@ -26,13 +26,12 @@ public interface MessageParser {
 	 * there should be checks to see if the list exists in the @see Map or if one should be
 	 * instaniated and added to the @see Map.
 	 * 
-	 * @param type The type of communication.
-	 * @param orderId A unique ID that represents a single request and its response.
-	 * @param args arguments of the callback.
-	 * @see MessageType
-	 * @see HistOptDataReq
-	 * @return Typically a string, that is hashed
+	 * @param type
+	 * @param orderId
+	 * @param args
+	 * @return
 	 */
-	public Object onCallback(MessageType type, int orderId, String [] args);
-	public Object onCallback(HistoricalDataType type, int orderId, int duration, List<String> args);
+	public Object onCallback(HistoricalDataType type, int orderId, List<String> args);
+	
+	
 	}

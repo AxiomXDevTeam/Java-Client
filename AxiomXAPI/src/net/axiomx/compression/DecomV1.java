@@ -1,7 +1,6 @@
 package net.axiomx.compression;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -10,7 +9,7 @@ public class DecomV1 implements Decompressor {
 	
 	@Override
 	public List<String> decompress(byte[] l, int len, int start) {
-		return RDG.toStrings(Arrays.copyOfRange(l, start - 1, len));
+		return RDG.toStrings(l);
 	}
 	
 	public List<String> decompress2(String s) {

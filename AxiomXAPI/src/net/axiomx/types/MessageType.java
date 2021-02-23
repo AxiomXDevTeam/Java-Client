@@ -4,6 +4,8 @@ package net.axiomx.types;
 public enum MessageType {
     CREDENTIALS("CRED"),
     PING("P"),
+    INFO("I"),
+    ERROR("E"),
     HIST_OPT_DATA_REQ("HODR"),
     HIST_OPT_DATA_CB("HODC"),
     HIST_OPT_DATA_CB_OBJ("HODC"),
@@ -28,15 +30,9 @@ public enum MessageType {
     }
     
 	public static MessageType from(String s) {
-		int end = s.indexOf(':');
-		
-		if(end < 0)
-			return null;
-		
-		String out = s.substring(0, end);
 		
 		for(MessageType t : MessageType.values()) 
-			if(t.toString().equalsIgnoreCase(out))
+			if(t.toString().equalsIgnoreCase(s))
 				return t;
 		
 		return null;
